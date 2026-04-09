@@ -274,7 +274,8 @@ toy:   graph=0.5000, trend=0.000462, embedding=0.5492, final=0.4198
 This allows the system to combine symbolic knowledge graph reasoning with neural semantic similarity.
 
 
-![UI](images/semantic-rerank.png)
+![UI](images/semantic-reranking.png)
+
 
 
 
