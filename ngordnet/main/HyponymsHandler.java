@@ -14,6 +14,7 @@ public class HyponymsHandler extends NgordnetQueryHandler {
     private NGramMap insNGramMap;
     private TrendScorer trendScorer;
     private WeightedRanker weightedRanker;
+    private QueryExpander queryExpander;
     private static final int DEFAULT_K = 10;
 
     public HyponymsHandler(NGramMap ngm, WordNet wNet) throws IOException {
@@ -21,6 +22,7 @@ public class HyponymsHandler extends NgordnetQueryHandler {
         insNGramMap = ngm;
         trendScorer = new TrendScorer(ngm);
         weightedRanker = new WeightedRanker();
+        queryExpander = new QueryExpander(wNet);
     }
 
     private List<String> getTopHyponyms(String sourceWord, List<String> hyponyms, int startYear, int endYear, int k) {
@@ -81,6 +83,9 @@ public class HyponymsHandler extends NgordnetQueryHandler {
         int startYear = q.startYear();
         int endYear = q.endYear();
         int k = q.k();
+
+        Set<String> expanded = queryExpander.expand(words.get(0));
+        System.out.println("Expanded query = " + expanded);
 
         if (k == -1) {
             k = DEFAULT_K;

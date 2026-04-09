@@ -120,6 +120,20 @@ public class WordNet {
         return totalCount;
     }
 
+    public Set<String> synonyms(String word) {
+        Set<String> result = new HashSet<>();
+        Set<Integer> synsetIDs = getSynsetIDs(word);
+
+        for (int id : synsetIDs) {
+            Set<String> synset = synsets.get(id);
+            if (synset != null) {
+                result.addAll(synset);
+            }
+        }
+
+        return result;
+    }
+
 
     public int distance(String sourceWord, String targetWord) {
     Set<Integer> sourceIds = getSynsetIDs(sourceWord);

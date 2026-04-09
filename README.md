@@ -2,19 +2,61 @@
 
 ## Overview
 
-This project extends a WordNet-based semantic search system into a **hybrid semantic ranking engine** by combining:
+This project extends a WordNet-based semantic search system into a **hybrid semantic retrieval and ranking engine** by combining:
 
-* WordNet graph structure
-* NGram temporal frequency trends
-* Weighted hybrid scoring
-* Web-based query interface
+* WordNet semantic graph traversal
+* Query expansion using WordNet synonyms
+* Graph-distance semantic scoring (BFS-based)
+* Google NGram temporal trend scoring
+* Weighted hybrid ranking pipeline
+* Web-based interactive query interface
 
-The system ranks semantic hyponyms using both **graph proximity** and **language usage trends**, similar to modern AI retrieval pipelines. Built a hybrid semantic ranking engine combining WordNet graph distance and Google NGram temporal trends, improving semantic retrieval relevance.Implemented weighted hybrid scoring (graph + trend) and top-k reranking pipeline using BFS-based semantic distance.Developed a web-based semantic search interface with REST API and real-time ranked hyponym retrieval.
+The system first expands user queries with semantically related terms, retrieves candidate hyponyms from the WordNet graph, and ranks them using both **semantic proximity** and **historical language usage trends**.
+
+This architecture mirrors modern AI retrieval pipelines that combine **symbolic knowledge graphs** with **statistical language signals** for improved semantic relevance.
+
+Key contributions:
+
+* Built a hybrid semantic ranking engine combining WordNet graph distance and Google NGram temporal trends
+* Implemented bounded query expansion to improve semantic recall
+* Designed weighted hybrid scoring (graph + trend) with top-k reranking
+* Implemented BFS-based semantic distance computation on a knowledge graph
+* Developed a web-based semantic search interface with REST API and real-time ranked retrieval
+
+The system serves as a lightweight semantic search prototype bridging knowledge graphs and AI-style retrieval ranking.
 
 
 ---
+## Architecture
+
+User Query
+↓
+Query Expansion (WordNet synonyms)
+↓
+Hyponym Retrieval (WordNet graph)
+↓
+Graph Distance Scoring
+↓
+Temporal Trend Scoring (Google NGram)
+↓
+Weighted Hybrid Ranking
+↓
+Top-K Semantic Results
+
+
+
+
 
 ## Features
+
+* WordNet-based semantic graph retrieval
+* Bounded query expansion using synonyms
+* BFS-based graph distance scoring
+* Google NGram temporal trend scoring
+* Weighted hybrid ranking
+* REST-style API and interactive web UI
+* Debuggable ranking output with graph / trend / final scores
+
 
 ### 1. WordNet Graph Retrieval
 
@@ -102,17 +144,12 @@ http://127.0.0.1:4567/ngordnet.html
 
 ---
 
-## Architecture
+### 7. query expansion
 
-WordNet Graph
-↓
-Graph Distance Scoring
-↓
-NGram Trend Scoring
-↓
-Weighted Hybrid Ranker
-↓
-Top-K Semantic Results
+![UI](images/query-expansion-1.png)
+
+![UI](images/query-expansion-2.png)
+
 
 ---
 
