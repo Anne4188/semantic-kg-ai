@@ -187,7 +187,6 @@ UI interface
 
 ## Future Work
 
-* Query expansion
 * Embedding similarity
 * Semantic reranking
 * LLM integration
