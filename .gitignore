@@ -44,3 +44,9 @@ Thumbs.db
 data/
 ngrams/
 *.csv
+
+
+.venv/
+__pycache__/
+*.pyc
+
