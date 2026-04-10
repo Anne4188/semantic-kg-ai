@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  java-app:
+    build: .
+    ports:
+      - "4567:4567"
+
+  python-reranker:
+    build: ./ai-service
+    ports:
+      - "8000:8000"
