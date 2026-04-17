@@ -2,7 +2,7 @@
 # Hybrid GraphRAG-like Semantic Retrieval and Answer Generation System
 
 
-===================================================================================================
+===============================================================
 
 # 1. Overview
 
@@ -59,14 +59,13 @@ The LLM module can be enabled or disabled via command-line arguments.
 * Prepared deployment configuration for live demo
 
 
-===================================================================================================
+========================================================
 
-
-## 2. Architecture
+### 2. Architecture
 
 This system implements a multi-stage hybrid symbolic + neural retrieval and answer generation pipeline.
 
-### High-level System Components
+# High-level System Components
 
 - **Java backend (Spark)** — graph traversal, ranking, and REST API
 - **Python service** — semantic reranking + optional LLM-based explanation
@@ -74,7 +73,9 @@ This system implements a multi-stage hybrid symbolic + neural retrieval and answ
 
 ---
 
-### End-to-End Pipeline
+# End-to-End Pipeline
+
+
 
 
 User Query
@@ -118,6 +119,8 @@ Web UI / API Output
     ↓
 Live Deployment (Docker / Cloud Hosting)
 
+
+
 ---
 
 ### Service Interaction
@@ -134,8 +137,9 @@ Live Deployment (Docker / Cloud Hosting)
 In Docker and cloud deployments, the Python service dynamically reads the Java API endpoint via environment variables (`JAVA_API_BASE`), enabling flexible service-to-service communication without hardcoded addresses.
 
 
-===============================================================================================
-## 3. How the System Works
+=================================================================
+
+### 3. How the System Works
 
 # Initial Problem -- Problem with Graph-only Retrieval 
 
@@ -245,7 +249,7 @@ high precision (via neural reranking)
 
 
 
-===================================================================================================
+============================================================
 
 ### 4. Ranking Strategy
 
@@ -435,7 +439,7 @@ As a result, the system can move beyond graph connectivity and produce semantica
 
 
 
-===================================================================================================
+=============================================================
 
 
 # 5. Evaluation 
@@ -464,7 +468,7 @@ Model	                     Precision@5	         Recall@5	          NDCG@5
 Graph + Trend	                0.25	               0.18	               0.28
 Hybrid Rerank (Top-40)	        0.50	               0.36	               0.42
 
----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------
 where,
 
 Hybrid reranking is a semantic reranking step where we refine the initial graph-based ranking by incorporating embedding-based similarity, combining symbolic, statistical, and neural signals into a unified scoring function.
@@ -515,7 +519,7 @@ It is the successful integration of the Java knowledge graph retrieval API with 
 
 
 
-===================================================================================================
+==========================================================
 
 ### 6. Operating Modes
 
@@ -657,7 +661,7 @@ This transforms the project from a simple semantic search engine into a producti
 
 
 
-===================================================================================================
+==============================================================
 ### 7. System Components
 
 The system is composed of several modular components across Java and Python:
@@ -745,7 +749,7 @@ Formats and returns results
 It serves as the recall stage of the system, generating a semantically related candidate pool using BFS traversal over the WordNet graph.
 
 
-------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------
 
 # Temporal Trend Scoring
 * Computes word usage frequency using Google NGram data
@@ -756,7 +760,7 @@ Key files：
 NGramMap.java
 TrendScorer.java
 
-------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------
 
 # First-stage Hybrid Ranking
 
@@ -767,7 +771,7 @@ Key files：
 
 WeightedRanker.java
 
-------------------------------------------------------------------------------------------------
+------------------------------------------------------------------
 
 # Neural Semantic Reranking
 
@@ -805,7 +809,7 @@ This neural signal complements symbolic WordNet-based retrieval by capturing con
 ![UI](images/Neural-embedding-similarity.png)
 
 
-------------------------------------------------------------------------------------------------
+--------------------------------------------------------
 
 
 # Answer Generation Layer
@@ -822,7 +826,7 @@ Answer generation：
 llm_answer.py
 
 
-------------------------------------------------------------------------------------------------
+------------------------------------------------------------
 
 # REST API Layer
 
@@ -843,7 +847,7 @@ AnswerHandler.java
 NgordnetServer.java
 
 
-------------------------------------------------------------------------------------------------
+---------------------------------------------------------
 
 # Evaluation Module
 
@@ -859,7 +863,7 @@ labeled_relevance.json
 
 
 
-------------------------------------------------------------------------------------------------
+--------------------------------------------------------
 # Deployment & Infrastructure
 
 Supports containerized deployment using Docker
@@ -873,7 +877,7 @@ docker-compose.yml
 Procfile
 
 
-===================================================================================================
+=============================================================
 
 
 ###  Demo 
@@ -958,7 +962,7 @@ This upgrades the system from:
 
 
 
-===================================================================================================
+=================================================================
 
 
 ### Trade-offs / Design Decisions
@@ -1006,7 +1010,7 @@ Python is used for embedding-based semantic reranking and answer generation, due
 
 This separation enables modular development and allows each component to use the most suitable tools, while integration is handled via API calls.
 
-===================================================================================================
+==========================================================
 
 
 # Project technology
@@ -1033,7 +1037,7 @@ Interactive web UI (HTML / JS)
 
 
 
-===================================================================================================
+=========================================================
 
 
 ### Result
@@ -1069,7 +1073,7 @@ Overall, the system demonstrates a GraphRAG-like architecture, where:
 * neural embeddings improve semantic precision
 * answer generation layers produce interpretable outputs
 
-===================================================================================================
+=============================================================
 ## Future Work
 
 * End-to-End Evaluation
