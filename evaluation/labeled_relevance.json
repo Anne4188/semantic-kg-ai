@@ -1,0 +1,44 @@
+
+
+{
+  "dog": {
+    "highly_relevant": ["dog", "puppy", "hound", "canine"],
+    "relevant": ["animal", "pet", "wolf"]
+  },
+  "animal": {
+    "highly_relevant": ["mammal", "bird", "fish", "organism"],
+    "relevant": ["dog", "cat", "plant"]
+  },
+  "food": {
+    "highly_relevant": ["fruit", "vegetable", "meat", "bread"],
+    "relevant": ["drink", "snack", "meal"]
+  },
+  "bird": {
+    "highly_relevant": ["sparrow", "eagle", "parrot", "owl"],
+    "relevant": ["animal", "wing", "feather"]
+  },
+  "vehicle": {
+    "highly_relevant": ["car", "truck", "bus", "bicycle"],
+    "relevant": ["transport", "automobile", "wagon"]
+  },
+  "mammal": {
+    "highly_relevant": ["dog", "cat", "horse", "whale"],
+    "relevant": ["animal", "human", "monkey"]
+  },
+  "fish": {
+    "highly_relevant": ["salmon", "trout", "shark", "tuna"],
+    "relevant": ["animal", "seafood", "aquatic"]
+  },
+  "fruit": {
+    "highly_relevant": ["apple", "banana", "orange", "grape"],
+    "relevant": ["food", "berry", "pear"]
+  },
+  "plant": {
+    "highly_relevant": ["tree", "flower", "grass", "shrub"],
+    "relevant": ["organism", "leaf", "seed"]
+  },
+  "tool": {
+    "highly_relevant": ["hammer", "screwdriver", "wrench", "knife"],
+    "relevant": ["instrument", "device", "equipment"]
+  }
+}

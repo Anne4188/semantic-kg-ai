@@ -25,6 +25,8 @@ public class Main {
         hns.register("history", new HistoryHandler(ngm));
         hns.register("historytext", new HistoryTextHandler(ngm));
         hns.register("hyponyms", new HyponymsHandler(ngm, wn));
+        
+        hns.register("answer", new AnswerHandler(ngm));
 
         System.out.println("Server setup done");
     }

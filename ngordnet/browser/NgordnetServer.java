@@ -1,19 +1,24 @@
+// NgordnetServer.java
+
 package ngordnet.browser;
 
 import static spark.Spark.*;
 
 public class NgordnetServer {
+
     public void register(String URL, NgordnetQueryHandler nqh) {
         get("/" + URL, nqh);
     }
 
+
+
     public void startUp() {
-        port(4567);
 
-        String staticPath = "/Users/anne/Desktop/semantic-kg-ai/semantic-kg-ai/src/main/resources/static";
-        System.out.println("Static path = " + staticPath);
+        String portStr = System.getenv("PORT");
+        int portNum = (portStr == null || portStr.isBlank()) ? 4567 : Integer.parseInt(portStr);
+        port(portNum);
 
-        staticFiles.externalLocation(staticPath);
+        staticFiles.location("/static");
 
         before((request, response) -> {
             response.header("Access-Control-Allow-Origin", "*");
@@ -24,4 +29,6 @@ public class NgordnetServer {
         init();
         awaitInitialization();
     }
+
+
 }

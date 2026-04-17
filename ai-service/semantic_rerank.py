@@ -1,18 +1,23 @@
 from embedding_search import EmbeddingSearch
 
+# Create the model globally only once to avoid repeated loading each time rerank is performed
+EMBEDDER = EmbeddingSearch()
+
 
 def rerank(query: str, candidates_with_scores: list[dict]) -> list[dict]:
+    if not candidates_with_scores:
+        return []
+
     candidates = [item["word"] for item in candidates_with_scores]
 
-    embedder = EmbeddingSearch()
-    embedding_scores = embedder.score_candidates(query, candidates)
+    embedding_scores = EMBEDDER.score_candidates(query, candidates)
 
     reranked = []
     for item in candidates_with_scores:
         word = item["word"]
-        graph_score = item["graphScore"]
-        trend_score = item["trendScore"]
-        embedding_score = embedding_scores[word]
+        graph_score = float(item["graphScore"])
+        trend_score = float(item["trendScore"])
+        embedding_score = float(embedding_scores[word])
 
         final_score = (
             0.4 * graph_score
@@ -62,7 +67,7 @@ if __name__ == "__main__":
             "trendScore": 4.619500923266326E-4
         },
     ]
-    
+
     results = rerank(query, candidates_with_scores)
 
     print(f"Query: {query}")

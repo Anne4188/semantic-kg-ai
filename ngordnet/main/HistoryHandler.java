@@ -1,3 +1,6 @@
+
+//HistoryHandler.java
+
 package ngordnet.main;
 
 import ngordnet.browser.NgordnetQuery;
