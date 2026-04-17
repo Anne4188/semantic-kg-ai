@@ -34,13 +34,13 @@ This architecture mirrors modern AI retrieval pipelines that combine:
 
 to improve semantic relevance, interpretability, and answer quality.
 
-# Optional LLM Integration
+### Optional LLM Integration
 
 The system supports optional external LLM-based answer generation.
 The LLM module can be enabled or disabled via command-line arguments.
 
 
-# What I Implemented
+### What I Implemented
 
 * Built a hybrid symbolic + neural semantic retrieval engine
 * Implemented WordNet graph traversal with BFS-based semantic distance scoring
@@ -61,11 +61,11 @@ The LLM module can be enabled or disabled via command-line arguments.
 
 ========================================================
 
-### 2. Architecture
+# 2. Architecture
 
 This system implements a multi-stage hybrid symbolic + neural retrieval and answer generation pipeline.
 
-# High-level System Components
+### High-level System Components
 
 - **Java backend (Spark)** — graph traversal, ranking, and REST API
 - **Python service** — semantic reranking + optional LLM-based explanation
@@ -73,7 +73,7 @@ This system implements a multi-stage hybrid symbolic + neural retrieval and answ
 
 ---
 
-# End-to-End Pipeline
+### End-to-End Pipeline
 
 
 
@@ -139,9 +139,9 @@ In Docker and cloud deployments, the Python service dynamically reads the Java A
 
 =================================================================
 
-### 3. How the System Works
+# 3. How the System Works
 
-# Initial Problem -- Problem with Graph-only Retrieval 
+### Initial Problem -- Problem with Graph-only Retrieval 
 
 Using WordNet graph retrieval alone led to two major issues.
 
@@ -156,7 +156,7 @@ dog, click, frank, heel, toy
 for the query "dog". While these terms are connected in the WordNet graph, they are not intuitive semantic results.This shows that knowledge graph traversal and trend-based ranking alone are insufficient for high-quality semantic search.
 
 
-# From Symbolic Retrieval to Hybrid Architecture
+### From Symbolic Retrieval to Hybrid Architecture
 
 This project integrates two complementary components:
 
@@ -175,7 +175,7 @@ the neural model improves semantic relevance
 
 
 
-# Why Initial Reranking Did Not Work
+### Why Initial Reranking Did Not Work
 
 After integration, the pipeline initially followed:
 
@@ -209,7 +209,7 @@ It can only reorder the existing items.
 
 
 
-# What Was Tried to Improve the System
+### What Was Tried to Improve the System
 
 To address this, the most important modification was:
 
@@ -234,7 +234,7 @@ So, this allows the reranker to promote stronger semantic candidates from a larg
 
 
 
-# Final Pipeline Behavior
+### Final Pipeline Behavior
 
 The final system combines:
 
@@ -251,9 +251,9 @@ high precision (via neural reranking)
 
 ============================================================================
 
-### 4. Ranking Strategy
+# 4. Ranking Strategy
 
-# Graph Distance Scoring --> graphScore
+### Graph Distance Scoring --> graphScore
 
 
 Each candidate word is scored based on its semantic distance in the WordNet graph:
@@ -271,7 +271,7 @@ farther nodes → rapidly decreasing score
 
 
 
-#  Temporal Trend Scoring --> trendScore
+###  Temporal Trend Scoring --> trendScore
 
 Each candidate is also scored using its usage frequency from Google NGram:
 
@@ -287,7 +287,7 @@ prefer commonly used semantic concepts
 
 -------------------------------
 
-#  First-stage hybrid ranking（baseline = graph + trend）
+###  First-stage hybrid ranking（baseline = graph + trend）
 
 Hybrid Ranking（stage 1）
 = graph（symbolic） + trend（statistical）
@@ -318,7 +318,7 @@ trend alone has no semantic structure
 combining them improves candidate quality
 
 
-# Hybrid Ranking Debug
+### Hybrid Ranking Debug
 
 ![Hybrid Score](images/Hybrid-Score-Debug.png)
 
@@ -326,7 +326,7 @@ combining them improves candidate quality
 
 ----------------------------------------------
 
-# Second-stage Hybrid Rerank： semantic reranking
+### Second-stage Hybrid Rerank： semantic reranking
 
 Hybrid Rerank（stage 2）
 = graph (symbolic ) + trend (statistical) + embedding (neural)
@@ -351,7 +351,7 @@ the query embedding
 the candidate word embedding
 
 
-# Final Scoring Function
+### Final Scoring Function
 
 The final ranking score is computed as a weighted combination of all three signals:
 
@@ -364,7 +364,7 @@ In practice, the system uses:
 finalScore = 0.4 * graphScore + 0.2 * trendScore + 0.4 * embeddingScore
 
 
-# Score Definitions
+### Score Definitions
 
 * graphScore:  #symbolic
 Inverse BFS distance in the WordNet graph
@@ -424,7 +424,7 @@ The initial graph-based retrieval optimizes recall, while semantic reranking imp
 
 
 
-# Why This Works
+### Why This Works
 
 This reranking step allows the system to combine:
 
@@ -478,7 +478,7 @@ Hybrid Rerank = a hybrid implementation of semantic reranking
 baseline = Graph + Trend
 
 
-# Compared with the baseline:
+### Compared with the baseline:
 
 Precision@5 improved by 100%
 Recall@5 improved by roughly 2×
@@ -498,7 +498,7 @@ Evaluation Scope
 This evaluation focuses on retrieval and ranking performance.The external LLM answer generation module is not included in quantitative evaluation, as it involves natural language generation rather than ranking.
 
 
-# Key Findings
+### Key Findings
 
 This work led to four main conclusions:
 
@@ -512,7 +512,7 @@ This shows that the real bottleneck was recall, not the reranker itself.
 where the knowledge graph handles recall and neural embeddings handle semantic reranking
 
 
-# One-Sentence Summary
+### One-Sentence Summary
 
 The main achievement of this section is not simply adding embeddings.
 It is the successful integration of the Java knowledge graph retrieval API with the Python neural reranker, followed by the design and evaluation of a multi-stage hybrid semantic retrieval pipeline. By expanding the candidate pool from 5 to 40, the system improved Precision@5 from 0.25 to 0.50, demonstrating the effectiveness of hybrid symbolic + neural retrieval.
@@ -521,11 +521,11 @@ It is the successful integration of the Java knowledge graph retrieval API with 
 
 ==========================================================
 
-### 6. Operating Modes
+# 6. Operating Modes
 
 This allows three operating modes:
 
-# Mode 1 — Retrieval Only
+### Mode 1 — Retrieval Only
 
 Query → Hybrid Retrieval → Ranked Results
 
@@ -561,7 +561,7 @@ Modules not used in this mode:
 * external LLM API
 
 
-# Mode 2 — Retrieval + Template Answer (rule-based)
+### Mode 2 — Retrieval + Template Answer (rule-based)
 
 Query → Retrieval → Rerank → Prompt Builder → Template Answer
 
@@ -578,7 +578,7 @@ Prompt Builder = Convert the data → into input that templates can use
 
 
 
-# Mode 3 — Retrieval + External LLM Answer
+### Mode 3 — Retrieval + External LLM Answer
 
 Query → Retrieval → Rerank → Prompt Builder → External LLM → Answer
 
@@ -605,7 +605,7 @@ Both Mode 2 and Mode 3 generate natural-language explanations. Mode 2 uses rule-
 
  I intentionally kept both Mode 2 and Mode 3: template-based generation is reliable, controllable, and free to run, while LLM-based generation is more expressive but introduces latency, cost, and potential hallucination. This design reflects real-world AI systems, where a deterministic baseline is maintained and LLMs are optionally enabled for enhanced user experience and reasoning capabilities.
 
-# Mode Selection
+### Mode Selection
 
 The generation mode can be selected via configuration or command-line arguments.
 
@@ -617,7 +617,7 @@ python3 llm_answer.py dog --use-llm    # Mode 3 (LLM)
 
 
 
-# The system functions as a Hybrid Symbolic + Neural Retrieval-Augmented Semantic Search and Answer Generation System.
+### The system functions as a Hybrid Symbolic + Neural Retrieval-Augmented Semantic Search and Answer Generation System.
 
 I built a full end-to-end pipeline that combines:
 
@@ -662,7 +662,7 @@ This transforms the project from a simple semantic search engine into a producti
 
 
 ==========================================================================
-### 7. System Components
+# 7. System Components
 
 The system is composed of several modular components across Java and Python:
 
@@ -683,7 +683,7 @@ Increases the candidate search space before graph retrieval
 
 
 
-#  WordNet Graph Retrieval
+###  WordNet Graph Retrieval
 
 This component is responsible for retrieving semantically related candidate words from the WordNet knowledge graph.
 
@@ -691,7 +691,7 @@ This component is responsible for retrieving semantically related candidate word
 * Performs BFS traversal to retrieve hyponyms
 * Provides candidate generation for downstream ranking
 
-# Example：
+### Example：
 
 For a query like: “dog”
 
@@ -712,7 +712,7 @@ These words form the candidate set for the subsequent sorting stage.
 
 
 
-# Key files：
+### Key files：
 
 * WordNet.java
 
@@ -751,7 +751,7 @@ It serves as the recall stage of the system, generating a semantically related c
 
 --------------------------------------------------------------------
 
-# Temporal Trend Scoring
+### Temporal Trend Scoring
 * Computes word usage frequency using Google NGram data
 * Assigns a trendScore to each candidate
 
@@ -762,7 +762,7 @@ TrendScorer.java
 
 --------------------------------------------------------------------
 
-# First-stage Hybrid Ranking
+### First-stage Hybrid Ranking
 
 * Combines graphScore and trendScore
 * Produces an initial ranked candidate set (Top-40)
@@ -773,7 +773,7 @@ WeightedRanker.java
 
 ------------------------------------------------------------------
 
-# Neural Semantic Reranking
+### Neural Semantic Reranking
 
 * Computes embedding-based semantic similarity
 * Reorders candidates using cosine similarity
@@ -812,7 +812,7 @@ This neural signal complements symbolic WordNet-based retrieval by capturing con
 --------------------------------------------------------
 
 
-# Answer Generation Layer
+### Answer Generation Layer
 
 Converts ranked results into structured prompts
 Generates natural-language explanations
@@ -828,7 +828,7 @@ llm_answer.py
 
 ------------------------------------------------------------
 
-# REST API Layer
+### REST API Layer
 
 Exposes system functionality via HTTP endpoints
 Integrates Java retrieval with Python reranking and answer generation
@@ -849,7 +849,7 @@ NgordnetServer.java
 
 ---------------------------------------------------------
 
-# Evaluation Module
+### Evaluation Module
 
 Evaluates retrieval performance using Precision, Recall, and NDCG
 Compares baseline vs hybrid reranking
@@ -864,7 +864,7 @@ labeled_relevance.json
 
 
 --------------------------------------------------------
-# Deployment & Infrastructure
+### Deployment & Infrastructure
 
 Supports containerized deployment using Docker
 Enables full pipeline execution as a service
@@ -880,7 +880,7 @@ Procfile
 =============================================================
 
 
-###  Demo 
+# Live Demo 
 
 ---
 
@@ -921,7 +921,7 @@ http://127.0.0.1:4567/ngordnet.html
 
 ---
 
-## Answer Generation API
+### Answer Generation API
 
 
 The system provides an /answer endpoint that returns a natural-language explanation grounded in hybrid retrieval and reranking results.
@@ -970,7 +970,7 @@ This upgrades the system from:
 
 This project involves several key design decisions to balance accuracy, efficiency, interpretability, and system complexity.
 
-# Why BFS instead of GNN?
+### Why BFS instead of GNN?
 
 I chose BFS-based graph traversal instead of Graph Neural Networks (GNNs) for several practical reasons.
 
@@ -981,7 +981,7 @@ Second, the dataset (WordNet) is relatively static and well-structured, making e
 In contrast, GNNs require significant training data, additional infrastructure, and introduce model complexity and latency. For this project, BFS provides sufficient semantic coverage while keeping the system simple, fast, and explainable.
 
 
-# Why embeddings only in the second stage?
+### Why embeddings only in the second stage?
 
 Embeddings are used only in the second stage (reranking) rather than during initial retrieval.
 
@@ -989,7 +989,7 @@ The first-stage retrieval (graph + trend) is designed to maximize recall by effi
 
 By restricting embedding similarity to the Top-K candidates (e.g., Top-40), the system achieves a balance between efficiency and accuracy: the candidate pool is large enough for meaningful semantic reranking, while computation remains tractable.
 
-# Why hybrid ranking instead of graph-only?
+### Why hybrid ranking instead of graph-only?
 
 Graph-only retrieval is insufficient for capturing true semantic relevance.
 
@@ -1000,7 +1000,7 @@ By combining graphScore (structure), trendScore (language usage), and embeddingS
 This design leverages the strengths of symbolic, statistical, and neural signals.
 
 
-# Why Java + Python split?
+### Why Java + Python split?
 
 The system is intentionally split between Java and Python to leverage the strengths of each ecosystem.
 
@@ -1040,7 +1040,7 @@ Interactive web UI (HTML / JS)
 =========================================================
 
 
-### Result
+# Result
 
 This project evolves from a basic WordNet-based search tool into a Hybrid Symbolic + Neural Retrieval-Augmented Semantic Search and Answer Generation System.
 
@@ -1074,7 +1074,7 @@ Overall, the system demonstrates a GraphRAG-like architecture, where:
 * answer generation layers produce interpretable outputs
 
 =============================================================
-## Future Work
+# Future Work
 
 * End-to-End Evaluation
 
