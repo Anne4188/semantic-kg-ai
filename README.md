@@ -2,7 +2,7 @@
 # Hybrid GraphRAG-like Semantic Retrieval and Answer Generation System
 
 
-===============================================================
+==================================================================================
 
 # 1. Overview
 
@@ -249,7 +249,7 @@ high precision (via neural reranking)
 
 
 
-============================================================
+============================================================================
 
 ### 4. Ranking Strategy
 
@@ -366,15 +366,15 @@ finalScore = 0.4 * graphScore + 0.2 * trendScore + 0.4 * embeddingScore
 
 # Score Definitions
 
-* graphScore:  #symbolic（知识图谱）
+* graphScore:  #symbolic
 Inverse BFS distance in the WordNet graph
 ->  captures structural semantic proximity
 
-* trendScore:  #statistical（语言数据）
+* trendScore:  #statistical
 Normalized Google NGram frequency
 -> captures how commonly the word is used
 
-* embeddingScore: #neural（深度学习）
+* embeddingScore: #neural
 Cosine similarity between sentence embeddings
 ->  captures true semantic similarity, embedding Score Interpretation
 
@@ -661,7 +661,7 @@ This transforms the project from a simple semantic search engine into a producti
 
 
 
-==============================================================
+==========================================================================
 ### 7. System Components
 
 The system is composed of several modular components across Java and Python:
