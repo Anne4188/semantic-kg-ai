@@ -52,11 +52,11 @@ The LLM module can be enabled or disabled via command-line arguments.
 * Developed RESTful semantic search API
 * Built /answer endpoint for retrieval-augmented explanation generation
 * Implemented prompt-based answer generation layer
-* Added optional external LLM integration (toggleable)
+* Added external LLM integration (toggleable)
 * Created evaluation framework with Precision@K, Recall@K, NDCG@K
 * Compared baseline vs hybrid retrieval performance
 * Built interactive web UI for semantic search visualization
-* Prepared deployment configuration for live demo
+* Deployment configuration for live demo
 
 
 ========================================================
@@ -67,17 +67,16 @@ This system implements a multi-stage hybrid symbolic + neural retrieval and answ
 
 ### High-level System Components
 
-- **Java backend (Spark)** — graph traversal, ranking, and REST API
-- **Python service** — semantic reranking + optional LLM-based explanation
-- **Frontend (HTML + JS)** — interactive query interface
+- Java backend (Spark) — graph traversal, ranking, and REST API
+- Python service — semantic reranking + optional LLM-based explanation
+- Frontend (HTML + JS) — interactive query interface
 
 ---
 
 ### End-to-End Pipeline
 
 
-
-
+```text
 User Query
     ↓
 Query Expansion (WordNet synonyms)
@@ -106,10 +105,10 @@ Evaluation Module (Precision / Recall / NDCG)
     ↓
 Prompt Builder (context construction)
     ↓
-┌───────────────────────────────┬───────────────────────────────┐
-│ Template Answer Generation    │ External LLM Answer Generation│
-│ (deterministic, rule-based)   │ (optional, model API-based)   │
-└───────────────────────────────┴───────────────────────────────┘
+┌───────────────────────────────┬────────────────────────────────┐
+│ Template Answer Generation    │ External LLM Answer Generation │
+│ (deterministic, rule-based)   │ (optional, API-based)          │
+└───────────────────────────────┴────────────────────────────────┘
     ↓
 Java /answer REST Endpoint
     ↓
@@ -118,8 +117,6 @@ Natural Language Explanation Response
 Web UI / API Output
     ↓
 Live Deployment (Docker / Cloud Hosting)
-
-
 
 ---
 
@@ -1016,23 +1013,41 @@ This separation enables modular development and allows each component to use the
 # Project technology
 
 Project Technology
+
 WordNet knowledge graph
+
 Graph traversal with BFS
+
 Query expansion using lexical semantics
+
 Google NGram statistical language data
+
 Hybrid symbolic ranking (graph + trend)
+
 Sentence Transformers (all-MiniLM-L6-v2)
+
 Embedding similarity with cosine distance
+
 Neural + symbolic hybrid retrieval
+
 Multi-stage semantic reranking
+
 Retrieval-augmented answer generation
+
 Prompt-based answer construction
+
 Optional external LLM integration (GraphRAG-style)
+
 Cross-language Java–Python pipeline
+
 RESTful API (Java + Spark)
+
 /answer natural-language explanation endpoint
+
 Evaluation metrics (Precision@K, Recall@K, NDCG)
+
 Baseline vs hybrid ranking comparison
+
 Interactive web UI (HTML / JS)
 
 
