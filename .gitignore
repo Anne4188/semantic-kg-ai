@@ -1,5 +1,5 @@
-# Maven
 
+# Maven
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -8,44 +8,32 @@ pom.xml.next
 release.properties
 
 # Java compiled files
-
 *.class
 
 # Logs
-
 *.log
 
 # OS generated files
-
 .DS_Store
 Thumbs.db
 
 # IntelliJ
-
 .idea/
 *.iml
 
 # VS Code
-
 .vscode/
 
-# Mac
-
-.DS_Store
-
 # Temporary files
-
 *.tmp
 *.swp
 *.swo
 
-# NGram / large dataset (optional)
-
-ngrams/
-*.csv
-
-
+# Python
 .venv/
 __pycache__/
 *.pyc
 
+# Large NGram files (exclude from Git / deployment repo)
+data/ngrams/top_14377_words.csv
+data/ngrams/top_49887_words.csv
