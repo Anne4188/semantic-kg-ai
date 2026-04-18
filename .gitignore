@@ -41,7 +41,6 @@ Thumbs.db
 
 # NGram / large dataset (optional)
 
-data/
 ngrams/
 *.csv
 
