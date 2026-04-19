@@ -17,7 +17,7 @@ public class NgordnetServer {
         port(portNum);
         System.out.println("Finished port");
 
-        // 必须尽量早设置
+        // It must be set up as early as possible
         initExceptionHandler(e -> {
             System.err.println("Spark init failed:");
             e.printStackTrace();

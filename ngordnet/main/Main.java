@@ -16,7 +16,7 @@ public class Main {
 
         NgordnetServer hns = new NgordnetServer();
 
-        // 先配置 Spark：port() 必须在任何 register/get 之前
+        // Configure Spark first：port() must come before any register/get
         hns.configure();
 
         System.out.println("Loading data...");
