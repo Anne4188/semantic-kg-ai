@@ -33,6 +33,7 @@ public class NgordnetServer {
     }
 
     public void register(String URL, NgordnetQueryHandler nqh) {
+        System.out.println("Registering route: /" + URL);
         get("/" + URL, nqh);
     }
 
