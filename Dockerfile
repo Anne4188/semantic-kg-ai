@@ -17,14 +17,14 @@ RUN python3 -m venv /opt/venv && \
         torch --index-url https://download.pytorch.org/whl/cpu && \
     /opt/venv/bin/pip install --no-cache-dir -r /app/ai-service/requirements.txt
 
-RUN mvn clean compile -DskipTests
+RUN mvn clean compile -DskipTests && \
+    mvn dependency:copy-dependencies -DincludeScope=runtime -DskipTests
 
-ENV PORT=10000
-EXPOSE 10000
+ENV PATH="/opt/venv/bin:$PATH"
 
 CMD ["bash", "-lc", "\
 mkdir -p /app/data/ngrams && \
-if [ ! -f /app/data/ngrams/top_14377_words.csv ]; then curl -L \"$NGRAM_WORDS_URL\" -o /app/data/ngrams/top_14377_words.csv; fi && \
-if [ ! -f /app/data/ngrams/total_counts.csv ]; then curl -L \"$NGRAM_COUNTS_URL\" -o /app/data/ngrams/total_counts.csv; fi && \
-mvn -q exec:java \
+curl -L $NGRAM_WORDS_URL -o /app/data/ngrams/top_14377_words.csv && \
+curl -L $NGRAM_COUNTS_URL -o /app/data/ngrams/total_counts.csv && \
+java -cp target/classes:target/dependency/* ngordnet.main.Main \
 "]
