@@ -7,7 +7,7 @@ import ngordnet.ngrams.NGramMap;
 public class Main {
     public static void main(String[] args) throws Exception {
 
-        System.out.println("THIS IS MY NEW MAIN ")
+        System.out.println("THIS IS MY NEW MAIN ");
         System.out.println("Main started");
 
         String wordFile = "./data/ngrams/top_14377_words.csv";
