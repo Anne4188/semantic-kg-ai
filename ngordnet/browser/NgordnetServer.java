@@ -3,9 +3,15 @@
 
 package ngordnet.browser;
 
-import static spark.Spark.*;
+import spark.Service;
 
 public class NgordnetServer {
+
+    private final Service http;
+
+    public NgordnetServer() {
+        this.http = Service.ignite();
+    }
 
     public void configure() {
         String portStr = System.getenv("PORT");
@@ -14,18 +20,17 @@ public class NgordnetServer {
         System.out.println("NgordnetServer.configure called");
 
         System.out.println("About to call port...");
-        port(portNum);
+        http.port(portNum);
         System.out.println("Finished port");
 
-        // It must be set up as early as possible
-        initExceptionHandler(e -> {
+        http.initExceptionHandler(e -> {
             System.err.println("Spark init failed:");
             e.printStackTrace();
         });
 
-        staticFiles.location("/static");
+        http.staticFiles.location("/static");
 
-        before((request, response) -> {
+        http.before((request, response) -> {
             response.header("Access-Control-Allow-Origin", "*");
             response.header("Access-Control-Request-Method", "*");
             response.header("Access-Control-Allow-Headers", "*");
@@ -34,15 +39,15 @@ public class NgordnetServer {
 
     public void register(String URL, NgordnetQueryHandler nqh) {
         System.out.println("Registering route: /" + URL);
-        get("/" + URL, nqh);
+        http.get("/" + URL, nqh);
     }
 
     public void start() {
         System.out.println("About to call init()...");
-        init();
+        http.init();
 
         System.out.println("About to call awaitInitialization()...");
-        awaitInitialization();
+        http.awaitInitialization();
 
         System.out.println("Spark initialization finished");
     }
