@@ -22,9 +22,17 @@ public class Main {
         // Configure Spark first：port() must come before any register/get
         hns.configure();
 
-        System.out.println("Loading data...");
+        //System.out.println("Loading data...");
+        //NGramMap ngm = new NGramMap(wordFile, countFile);
+        //WordNet wn = new WordNet(synsetFile, hyponymFile, ngm);
+
+        System.out.println("Loading NGramMap...");
         NGramMap ngm = new NGramMap(wordFile, countFile);
+        System.out.println("Finished loading NGramMap");
+
+        System.out.println("Loading WordNet...");
         WordNet wn = new WordNet(synsetFile, hyponymFile, ngm);
+        System.out.println("Finished loading WordNet");
 
         hns.register("history", new HistoryHandler(ngm));
         hns.register("historytext", new HistoryTextHandler(ngm));
