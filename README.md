@@ -141,6 +141,28 @@ In Docker and cloud deployments, the Python service dynamically reads the Java A
 
 # 3. How the System Works
 
+System Architecture
+
+User → Web UI → Java REST API → (WordNet + NGram)
+                                      ↓
+                              Candidate Retrieval
+                                      ↓
+                         Python Embedding Service
+                                      ↓
+                          Hybrid Ranking (Top-40 → Top-5)
+                                      ↓
+                     Retrieval-Augmented Answer Generation
+                                      ↓
+                               Natural Language Output
+
+The system follows a hybrid retrieval architecture combining:
+
+Symbolic reasoning (WordNet graph traversal)
+Statistical signals (Google NGram trends)
+Neural similarity (Sentence Transformers)
+Retrieval-augmented generation (LLM-based explanation)
+
+
 ### Initial Problem -- Problem with Graph-only Retrieval 
 
 Using WordNet graph retrieval alone led to two major issues.
@@ -230,6 +252,47 @@ So, this allows the reranker to promote stronger semantic candidates from a larg
 
 ![UI](images/hybrid-vs-baseline-evaluation-2.png)
 ![UI](images/hybrid-vs-baseline-evaluation-3.png)
+
+
+This project intentionally adopts a multi-stage hybrid ranking pipeline rather than a single-model approach.
+
+1. Top-40 → Top-5 Two-Stage Ranking
+Stage 1: retrieve Top-40 candidates using fast graph + trend signals
+Stage 2: rerank Top-5 using expensive embedding similarity
+
+Why:
+
+Reduces computational cost of embeddings
+Mimics real-world search systems (recall → precision)
+Improves both efficiency and ranking quality
+
+
+2. Hybrid Scoring (Graph + Trend + Embedding)
+
+Each candidate is scored using:
+
+Graph distance (WordNet BFS)
+Temporal trend (Google NGram)
+Semantic similarity (embeddings)
+
+Why:
+
+Graph captures lexical relationships
+Trend captures usage frequency
+Embeddings capture contextual meaning
+
+No single signal is sufficient — combining them improves robustness.
+
+3. Java + Python Split Architecture
+Java handles API, graph traversal, and system orchestration
+Python handles embeddings and optional LLM generation
+
+Why:
+
+Java: strong backend performance and structure
+Python: rich ML ecosystem
+
+This reflects real-world ML system design.
 
 
 
@@ -880,8 +943,6 @@ Procfile
 =============================================================
 
 
-# Live Demo 
-
 ---
 
 ###  Web API
@@ -960,15 +1021,240 @@ This upgrades the system from:
 
 ![UI](images/Natural-language-explanation.png)
 
+=================================================================
+
+# Demo 
+
+Live UI
+https://semantic-kg-ai.onrender.com/ngordnet.html
+
+### Demo Status
+
+### Build and Run
+
+The project can be built and run using Docker:
+
+![Docker Build](images/docker-build-success.png)
+
+This project has two demo modes:
+
+1. Local Docker Demo — Full Functionality
+
+### Backend Initialization
+
+The backend successfully loads all data and registers API routes:
+
+This confirms that:
+
+* WordNet and NGram data are fully loaded
+* All endpoints (/history, /hyponyms, /answer) are registered
+* The server is fully initialized
+
+![Server Startup](images/docker-server-startup-routes.png)
+
+
+###  Frontend UI 
+
+The frontend UI is successfully served by the backend:
+
+![UI HTML](images/local-ui-html-curl.png)
+
+This confirms that:
+- The server is running
+- Static files are correctly configured
+- The UI can be loaded in a browser
+
+
+
+* The web UI and API both work locally.
+* The /answer endpoint successfully generates natural-language explanations for queries such as dog and cat.
+
+### API Verification → answer endpoint works : (API works)
+
+![API Response](images/local-answer-api-dog.png)
+
+
+This demonstrates that the system can:
+
+* Retrieve semantic candidates
+* Rank them using hybrid signals
+* Generate natural-language explanations
+
+
+### Interactive UI Examples
+
+The system supports interactive queries via the web UI:  
+
+![Cat Example](images/local-ui-cat-answer.png)
+
+![Dog Example](images/local-ui-dog-answer.png)
+
+Users can:
+
+* Enter a query (e.g., cat, dog)
+* Adjust parameters (k, year range)
+* Enable external LLM
+* Receive semantic explanations
+
+This picture proves that users can successfully use the /answer function through the UI
+
+That is: UI input → API → Return result → UI display
+
+
+2. Render Live Deployment — UI-Level Demo
+
+Live UI:
+
+https://semantic-kg-ai.onrender.com/ngordnet.html
+
+The service is successfully deployed on Render:
+
+![Render Live](images/render-deployment-live.png)
+
+* The Render deployment successfully serves the frontend UI online.
+* The live URL is accessible through the browser.
+* However, the Render free instance has limited memory and startup resources.
+* When loading the full NGram dataset, backend initialization may stop at Loading NGramMap....
+* Because route registration happens after data loading, API routes such as /answer may not be registered in the live instance.
+* As a result, the hosted UI may load successfully while backend requests return 404 or show Error generating answer.
+
+This demonstrates a real-world engineering tradeoff: the system works end-to-end locally with full data, but deploying the same full-scale dataset to a small cloud instance requires either more memory, data preprocessing, lazy loading, or a higher-resource deployment platform.
+
+
+### What the Demo Shows
+
+The demo proves that the system can:
+
+* Load semantic resources from WordNet and Google NGram data
+* Run a Java backend server inside Docker
+* Register REST API routes
+* Serve an interactive web UI
+* Process user queries such as dog and cat
+* Rank semantic candidates using graph, trend, and embedding signals
+* Generate natural-language explanations through the /answer endpoint
+* Integrate Java backend logic with Python-based semantic reranking and optional LLM generation
+
+==============================================================
+
+# Deployment Challenges (Key Engineering Insight )
+
+The system runs fully locally with the complete dataset.
+
+However, during cloud deployment, a key engineering challenge emerged:
+
+Loading large-scale NGram data exceeded the memory and startup constraints of the hosting environment (Render free tier).
+
+As a result:
+
+Backend initialization stops during data loading
+API routes (e.g., /answer) are not registered
+The UI loads successfully, but API calls may return errors
+
+
+
+### Cold Start Behavior
+
+Render free instances may spin down after inactivity.  
+When a request arrives, the service must wake up, which may result in temporary failures:
+
+![503 Wake-up](images/render-ui-503-wakeup.png)
+
+
+### API Route Not Available
+
+Because backend initialization does not complete, API routes are not registered:
+
+![404 API](images/render-answer-404.png)
+
+As a result:
+
+- `/answer` returns 404
+- Backend handlers are not available
+
+
+### UI Behavior Under Failure
+
+When the backend API is unavailable, the UI cannot retrieve results:
+
+![UI Error](images/render-ui-error-answer.png)
+
+This results in:
+
+- Empty or failed responses in the UI
+- Error messages such as "Error generating answer"
+
+
+
+--------------------
+
+### Why This Happens
+
+The current system design loads the entire NGram dataset at startup, before registering routes:
+
+Start server → Load NGram → Load WordNet → Register routes
+
+When dataset loading is slow or memory-intensive:
+
+Route registration never happens
+
+
+
+### This is not a bug, but a real-world system design tradeoff:
+
+Large datasets improve retrieval quality
+But increase memory usage and startup latency
+Cloud environments impose strict resource limits
+
+
 
 
 =================================================================
 
 
-### Trade-offs / Design Decisions
+# Dataset Tradeoff and Deployment Decisions
+
+During development, I explored using a reduced dataset to enable full functionality in the live cloud deployment.
+
+However, this approach introduced a significant degradation in system performance and answer quality:
+
+- Reduced vocabulary coverage led to weaker semantic retrieval
+- Fewer candidate words negatively impacted ranking diversity
+- Embedding-based similarity became less reliable
+- Generated explanations became noticeably less accurate and less informative
+
+Given these issues, I chose to prioritize correctness and retrieval quality over degraded live performance.
+
+To support large-scale data while maintaining system fidelity:
+
+- I moved the full NGram datasets to GitHub Releases
+- The system dynamically downloads the datasets at startup
+
+This approach preserves the full retrieval pipeline behavior while exposing real-world deployment challenges, including:
+
+- memory constraints in cloud environments
+- startup time limitations
+- tradeoffs between data scale and system availability
+
+This experience reflects practical considerations in deploying data-intensive retrieval systems.
 
 
-This project involves several key design decisions to balance accuracy, efficiency, interpretability, and system complexity.
+
+### Key Insight
+
+The system works fully locally but is constrained in the cloud due to:
+
+* Large dataset size (NGram CSV)
+* Limited memory (Render free tier)
+* Startup-time data loading
+
+This reflects a real-world engineering tradeoff between:
+
+* Data scale
+* System performance
+* Deployment constraints
+
+
+=========================================================================
 
 ### Why BFS instead of GNN?
 
@@ -989,6 +1275,8 @@ The first-stage retrieval (graph + trend) is designed to maximize recall by effi
 
 By restricting embedding similarity to the Top-K candidates (e.g., Top-40), the system achieves a balance between efficiency and accuracy: the candidate pool is large enough for meaningful semantic reranking, while computation remains tractable.
 
+
+
 ### Why hybrid ranking instead of graph-only?
 
 Graph-only retrieval is insufficient for capturing true semantic relevance.
@@ -998,6 +1286,7 @@ While WordNet graph structure provides strong symbolic relationships, it does no
 By combining graphScore (structure), trendScore (language usage), and embeddingScore (semantic similarity), the hybrid ranking approach produces more accurate and robust results.
 
 This design leverages the strengths of symbolic, statistical, and neural signals.
+
 
 
 ### Why Java + Python split?
@@ -1090,6 +1379,8 @@ Overall, the system demonstrates a GraphRAG-like architecture, where:
 * knowledge graphs provide structured recall
 * neural embeddings improve semantic precision
 * answer generation layers produce interpretable outputs
+
+
 
 =============================================================
 # Future Work
